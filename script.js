@@ -1,13 +1,15 @@
 const operators = {
   add: (num, num2) => {
-    console.log(num + num2);
+    let sum = num + num2;
+    calculatorMemory.digitsInputted = sum;
+    updateDisplay();
   },
   subtract: (num, num2) => {},
   multiply: (num, num2) => {},
   divide: (num, num2) => {},
 };
 
-const operate = (operator, num, num2) => {
+const decideOperation = (operator, num, num2) => {
   switch (operator) {
     case "+":
       operators.add(num, num2);
@@ -18,10 +20,12 @@ const operate = (operator, num, num2) => {
   }
 };
 
-operate("+", 23, 34);
-
 const calculatorMemory = {
-  digitsToDisplay: "0",
+  digitsInputted: "0",
+
+  currentOperand: "",
+  currentOperator: "",
+  nextOperand: "",
 };
 
 const btnsClicked = () => {
@@ -31,27 +35,64 @@ const btnsClicked = () => {
       let digit = e.target.value;
       inputDigit(digit);
     }
+    if (e.target.classList.contains("btn-operator")) {
+      let operator = e.target.value;
+      inputOperator(operator);
+    }
+    if (e.target.classList.contains("btn-equals")) {
+      let operator = e.target.value;
+      inputEquals();
+    }
+    if (e.target.classList.contains("btn-clear")) {
+      clearMemory();
+    }
   });
 };
 btnsClicked();
 
 const inputDigit = (digit) => {
-  debugger;
-  let { digitsToDisplay } = calculatorMemory;
-  if (digitsToDisplay === "0") {
-    digitsToDisplay = digit;
+  //just destructures the prop
+  let { digitsInputted } = calculatorMemory;
+  //try ternary
+  if (digitsInputted === "0") {
+    digitsInputted = digit;
   } else {
-    digitsToDisplay = digitsToDisplay + digit;
+    digitsInputted += digit;
   }
+  calculatorMemory.digitsInputted = digitsInputted;
 
   updateDisplay();
 };
 
-const updateDisplay = () => {
-  let { digitsToDisplay } = calculatorMemory;
-  const calculatorDisplay = document.querySelector(".calculator-display");
-  calculatorDisplay.value = digitsToDisplay;
+const inputOperator = (operator) => {
+  if (calculatorMemory.operator !== "") {
+  }
+  calculatorMemory.currentOperator = operator;
+  calculatorMemory.currentOperand = calculatorMemory.digitsInputted;
+  calculatorMemory.digitsInputted = "";
+};
 
-  // const calculatorDisplay = document.querySelector(".calculator-display");
-  // calculatorDisplay.value = digitsToDisplay;
+const inputEquals = () => {
+  let { currentOperand, currentOperator, nextOperand } = calculatorMemory;
+  calculatorMemory.nextOperand = calculatorMemory.digitsInputted;
+  calculatorMemory.digitsInputted = "";
+
+  decideOperation(
+    currentOperator,
+    parseFloat(currentOperand),
+    parseFloat(calculatorMemory.nextOperand)
+  );
+};
+
+const clearMemory = () => {
+  calculatorMemory.digitsInputted = "0";
+  calculatorMemory.currentOperand = "";
+  calculatorMemory.currentOperator = "";
+  calculatorMemory.nextOperand = "";
+  updateDisplay();
+};
+
+const updateDisplay = () => {
+  const calculatorDisplay = document.querySelector(".calculator-display");
+  calculatorDisplay.value = calculatorMemory.digitsInputted;
 };
