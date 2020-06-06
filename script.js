@@ -58,17 +58,18 @@ function inputOperator(operatorInputted) {
 
   let numberInStorage = parseFloat(storage);
 
+  if (operand1 === null) {
+    memory.operand1 = numberInStorage;
+  }
+
   if (previousOperator && memory.expectingOperand2) {
     memory.previousOperator = operatorInputted;
     return;
   }
 
-  if (operand1 === null) {
-    memory.operand1 = numberInStorage;
-  }
-
   if (previousOperator || operatorInputted === "=") {
-    let result = operate(previousOperator, operand1, numberInStorage);
+    let operand2 = numberInStorage;
+    let result = operate(previousOperator, operand1, operand2);
     memory.storage = String(result);
     memory.operand1 = result;
     updateDisplay();
@@ -90,29 +91,14 @@ function clearBtnClicked() {
 function operate(operator, a, b) {
   switch (operator) {
     case "+":
-      return operations.add(a, b);
+      return a + b;
     case "-":
-      return operations.subtract(a, b);
+      return a - b;
     case "*":
-      return operations.multiply(a, b);
+      return a * b;
     case "/":
-      return operations.divide(a, b);
+      return a / b;
     default:
       return "Error";
   }
 }
-
-const operations = {
-  add(a, b) {
-    return a + b;
-  },
-  subtract(a, b) {
-    return a - b;
-  },
-  multiply(a, b) {
-    return a * b;
-  },
-  divide(a, b) {
-    return a / b;
-  },
-};
