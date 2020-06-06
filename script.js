@@ -1,34 +1,4 @@
-const operators = {
-  add: (num, num2) => {
-    let sum = num + num2;
-    calculatorMemory.digitsInputted = sum;
-    updateDisplay();
-  },
-  subtract: (num, num2) => {},
-  multiply: (num, num2) => {},
-  divide: (num, num2) => {},
-};
-
-const decideOperation = (operator, num, num2) => {
-  switch (operator) {
-    case "+":
-      operators.add(num, num2);
-      break;
-
-    default:
-      break;
-  }
-};
-
-const calculatorMemory = {
-  digitsInputted: "0",
-
-  currentOperand: "",
-  currentOperator: "",
-  nextOperand: "",
-};
-
-const btnsClicked = () => {
+function initiate() {
   const calculatorBtns = document.querySelector(".calculator-btns");
   calculatorBtns.addEventListener("click", (e) => {
     if (e.target.classList.contains("btn-digit")) {
@@ -39,60 +9,110 @@ const btnsClicked = () => {
       let operator = e.target.value;
       inputOperator(operator);
     }
-    if (e.target.classList.contains("btn-equals")) {
-      let operator = e.target.value;
-      inputEquals();
-    }
     if (e.target.classList.contains("btn-clear")) {
-      clearMemory();
+      clearBtnClicked();
+    }
+    if (e.target.classList.contains("btn-decimal")) {
+      decimalBtnClicked();
     }
   });
-};
-btnsClicked();
+}
+initiate();
 
-const inputDigit = (digit) => {
-  //just destructures the prop
-  let { digitsInputted } = calculatorMemory;
-  //try ternary
-  if (digitsInputted === "0") {
-    digitsInputted = digit;
+const memory = {
+  // represent user input or result of operation
+  storage: "0",
+
+  operand1: null,
+  previousOperator: null,
+  expectingOperand2: false,
+};
+
+function updateDisplay() {
+  const display = document.querySelector(".calculator-display");
+
+  display.value = memory.storage;
+}
+
+function inputDigit(digit) {
+  const { storage, expectingOperand2 } = memory;
+
+  if (expectingOperand2 === true) {
+    memory.storage = digit;
+    memory.expectingOperand2 = false;
   } else {
-    digitsInputted += digit;
+    memory.storage = storage === "0" ? digit : storage + digit;
   }
-  calculatorMemory.digitsInputted = digitsInputted;
 
   updateDisplay();
-};
+}
 
-const inputOperator = (operator) => {
-  if (calculatorMemory.operator !== "") {
+function decimalBtnClicked() {
+  if (!memory.storage.includes(".")) {
+    memory.storage += ".";
   }
-  calculatorMemory.currentOperator = operator;
-  calculatorMemory.currentOperand = calculatorMemory.digitsInputted;
-  calculatorMemory.digitsInputted = "";
-};
+}
 
-const inputEquals = () => {
-  let { currentOperand, currentOperator, nextOperand } = calculatorMemory;
-  calculatorMemory.nextOperand = calculatorMemory.digitsInputted;
-  calculatorMemory.digitsInputted = "";
+function inputOperator(operatorInputted) {
+  const { storage, operand1, previousOperator } = memory;
 
-  decideOperation(
-    currentOperator,
-    parseFloat(currentOperand),
-    parseFloat(calculatorMemory.nextOperand)
-  );
-};
+  let numberInStorage = parseFloat(storage);
 
-const clearMemory = () => {
-  calculatorMemory.digitsInputted = "0";
-  calculatorMemory.currentOperand = "";
-  calculatorMemory.currentOperator = "";
-  calculatorMemory.nextOperand = "";
+  if (previousOperator && memory.expectingOperand2) {
+    memory.previousOperator = operatorInputted;
+    return;
+  }
+
+  if (operand1 === null) {
+    memory.operand1 = numberInStorage;
+  }
+
+  if (previousOperator || operatorInputted === "=") {
+    let result = operate(previousOperator, operand1, numberInStorage);
+    memory.storage = String(result);
+    memory.operand1 = result;
+    updateDisplay();
+  }
+
+  memory.previousOperator = operatorInputted;
+  //shows 1st operand has been entered and 2nd one to be entered
+  memory.expectingOperand2 = true;
+}
+
+function clearBtnClicked() {
+  memory.storage = "0";
+  memory.operand1 = null;
+  memory.previousOperator = null;
+  memory.expectingOperand2 = false;
   updateDisplay();
-};
+}
 
-const updateDisplay = () => {
-  const calculatorDisplay = document.querySelector(".calculator-display");
-  calculatorDisplay.value = calculatorMemory.digitsInputted;
+function operate(operator, a, b) {
+  switch (operator) {
+    case "+":
+      return operations.add(a, b);
+    case "-":
+      return operations.subtract(a, b);
+    case "*":
+      return operations.multiply(a, b);
+    case "/":
+      return operations.divide(a, b);
+    default:
+      return "Error";
+  }
+}
+
+const operations = {
+  add(a, b) {
+    return a + b;
+  },
+  subtract(a, b) {
+    return a - b;
+  },
+  multiply(a, b) {
+    return a * b;
+  },
+  divide(a, b) {
+    return a / b;
+  },
 };
