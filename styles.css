@@ -8,79 +8,52 @@
 
 html {
   box-sizing: border-box;
-  min-height: 100%;
+  /* Makes number easy to work with by setting root HTML font-size as a %. (of the user’s default browser font-size. ) */
+  /* if the user’s default browser font-size is changed to, ie 20px, 1.6rem would now equal 20px.  */
+  font-size: 62.5%;
 }
 
-body {
-  background: linear-gradient(352deg, #c3c9c6, #72b88a);
-}
-
-.calculator {
-  /* height: 40rem; */
-  width: 30rem;
-  border: 0.5rem solid black;
+.calc {
+  height: 40rem;
+  width: 35rem;
+  border: black solid 1rem;
   border-radius: 1rem;
 
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-
-  /* display: grid;
-  grid-template-rows: repeat(6, 1fr);
-  grid-template-columns: repeat(4, 1fr);
-  grid-template-areas: "disp disp disp"; */
+  margin: 0 auto;
+  margin-top: 20rem;
 }
 
-.calculator-display {
+/* standalone feature */
+.calc-screen {
   width: 100%;
   height: 5rem;
-  padding-right: 1rem;
-  padding-bottom: 0.5rem;
-
-  background: black;
-  color: white;
-  border-style: none;
   font-size: 4rem;
   text-align: right;
+  padding-right: 0.6rem;
 }
 
-.calculator-btns {
+.calc-btns {
+  padding: 1rem;
+  /* 100% of the height or parent container height: 100%; */
+  /* 87% to prevent btns from flowing out of calc-btns; 13% is taken up by screen */
+  height: 87%;
+  /* create grid for calc btns */
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  /* grid-template allows us to specify how many rows or cols and of what sizes they should be in the grid.  */
   grid-template-rows: repeat(5, 1fr);
-  grid-gap: 1.2rem;
-
-  padding: 1.2rem;
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: 1rem;
 }
 
-.calculator-btn {
-  height: 3rem;
-  border: 1px solid black;
-  background-color: transparent;
-  font-size: 2rem;
-  color: black;
-}
-
-.calculator-btn:hover {
-  background-color: #eaeaea;
-}
-
-.calculator-btn:active {
-  background-color: lightgray;
-}
-
-.calculator-btn:focus {
-  /* not recommended */
-  outline: none;
-}
-/* Grid lines are dividing lines between cols, rows*/
-/* grid-column defines on which row-line item will start */
-/* it's also shorthand of grid-column-start + grid-column-end */
+/* a grid item */
 .btn-clear {
-  grid-column: 1 / 4;
+  /* A grid line is a line that exists on each side of a column and a row. */
+  /* useful when moving/positioning grid items from one place to another in the grid */
+  grid-column-start: 1;
+  grid-column-end: 4;
 }
 
-.btn-0 {
-  grid-column: 1 / 3;
+.btn-zero {
+  /* make item span across multiple columns by targeting them specifically */
+  grid-column: span 2;
 }

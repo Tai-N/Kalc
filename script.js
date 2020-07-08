@@ -1,104 +1,96 @@
-function initiate() {
-  const calculatorBtns = document.querySelector(".calculator-btns");
-  calculatorBtns.addEventListener("click", (e) => {
+// perform an operation on operands and returns result
+function operate(operator, operand1, operand2) {
+  switch (operator) {
+    case "+":
+      return operand1 + operand2;
+    case "-":
+      return operand1 - operand2;
+    case "*":
+      return operand1 * operand2;
+    case "/":
+      return operand1 / operand2;
+  }
+}
+
+// get value for each button when user clicked
+//    create a DOM delegation event listener to determine which btn clicked
+function btnsClicked() {
+  // ? when qs selecting, use . or #
+  const calcBtns = document.querySelector(".calc-btns");
+  calcBtns.addEventListener("click", (e) => {
+    // get user digit input
+    //.classname returned all the classes
     if (e.target.classList.contains("btn-digit")) {
+      // get value from html ele
       let digit = e.target.value;
-      inputDigit(digit);
-    }
-    if (e.target.classList.contains("btn-operator")) {
-      let operator = e.target.value;
-      inputOperator(operator);
+      enterDigit(digit);
     }
     if (e.target.classList.contains("btn-clear")) {
-      clearBtnClicked();
+      clear();
     }
     if (e.target.classList.contains("btn-decimal")) {
-      decimalBtnClicked();
+      let dot = e.target.value;
+      enterDecimal(dot);
     }
   });
 }
-initiate();
+btnsClicked();
 
 const memory = {
-  // represent user input or result of operation
+  // this value will be displayed on the screen
   storage: "0",
-
+  //store all our operands as items in an array
+  runningBuffer: [],
+  //store converted actual number values, not strings
   operand1: null,
-  previousOperator: null,
-  expectingOperand2: false,
+  operator: null,
+  operand2: null,
 };
 
-function updateDisplay() {
-  const display = document.querySelector(".calculator-display");
-
-  display.value = memory.storage;
-}
-
-function inputDigit(digit) {
-  const { storage, expectingOperand2 } = memory;
-
-  if (expectingOperand2 === true) {
-    memory.storage = digit;
-    memory.expectingOperand2 = false;
-  } else {
-    memory.storage = storage === "0" ? digit : storage + digit;
+// create fn to handle entered digits
+function enterDigit(digitEntered) {
+  //store these digits in a memory
+  // if 0 is present as value in storage, and 0 is entered as 1st digit...
+  if (memory.storage === "0" && digitEntered === "0") {
+    return;
   }
-
-  updateDisplay();
-}
-
-function decimalBtnClicked() {
-  if (!memory.storage.includes(".")) {
-    memory.storage += ".";
-  }
-}
-
-function inputOperator(operatorInputted) {
-  const { storage, operand1, previousOperator } = memory;
-
-  let numberInStorage = parseFloat(storage);
-
-  if (operand1 === null) {
-    memory.operand1 = numberInStorage;
-  }
-
-  if (previousOperator && memory.expectingOperand2) {
-    memory.previousOperator = operatorInputted;
+  // if 0 is present as value in storage, and non zero digit is entered 1st...
+  if (memory.storage === "0" && digitEntered != "0") {
+    memory.storage = digitEntered;
+    updateScreen();
     return;
   }
 
-  if (previousOperator || operatorInputted === "=") {
-    let operand2 = numberInStorage;
-    let result = operate(previousOperator, operand1, operand2);
-    memory.storage = String(result);
-    memory.operand1 = result;
-    updateDisplay();
-  }
+  // else, continue adding to digit string
+  memory.storage += digitEntered;
 
-  memory.previousOperator = operatorInputted;
-  //shows 1st operand has been entered and 2nd one to be entered
-  memory.expectingOperand2 = true;
+  updateScreen();
 }
 
-function clearBtnClicked() {
+function enterDecimal(dot) {
+  // if there's already a dot in the digit string in storage and dot is entered..
+  if (memory.storage.includes(".")) {
+    return;
+  }
+
+  if (memory.storage === "0") {
+    memory.storage = dot;
+  } else {
+    // concatenate dot to digit string
+    memory.storage += dot;
+  }
+
+  updateScreen();
+}
+
+// fn to display value on screen
+function updateScreen() {
+  // html value attribute represents calc screen
+  const screen = document.querySelector(".calc-screen");
+  screen.value = memory.storage;
+}
+
+function clear() {
   memory.storage = "0";
-  memory.operand1 = null;
-  memory.previousOperator = null;
-  memory.expectingOperand2 = false;
-  updateDisplay();
-}
-
-function operate(operator, a, b) {
-  switch (operator) {
-    case "+":
-      return a + b;
-    case "-":
-      return a - b;
-    case "*":
-      return a * b;
-    case "/":
-      return a / b;
-    default:
-      return "Error";
-  }
+  updateScreen();
 }
