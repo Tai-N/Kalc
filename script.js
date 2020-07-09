@@ -85,10 +85,10 @@ function enterDecimal(dot) {
 // store the first number that is inputted into the calculator when a user presses an operator
 function enterOperator(operatorEntered) {
   //?When a user enters two or more operators consecutively, you should be able to hit - to override the + that was previously entered. 1 + 2 +- 3
-  if (condition) {
-    memory.operator = operatorEntered;
-    return;
-  }
+  // if (condition) {
+  //   memory.operator = operatorEntered;
+  //   return;
+  // }
 
   // Users should be able to string together several operations: 1 + 2 + 3 etc
   // check if another operator already exists when we enter a new operator, perform operation, then display on screen;
@@ -105,7 +105,7 @@ function enterOperator(operatorEntered) {
   memory.buffer = "0";
   //save operator chosen
   memory.operator = operatorEntered;
-  memory.expectingOperand2 = true;
+  // memory.expectingOperand2 = true;
 }
 
 function clickEquals() {
