@@ -10,10 +10,11 @@
 
   <body>
     <div class="calc">
-      <!-- calc screen value is 0 at default -->
+      <!-- calc screen value is 0 at default when app 1st opens -->
       <input type="text" class="calc-screen" value="0" disabled/>
 
       <div class="calc-btns">
+        <!-- value attribute allow us to retrieve actual value of button -->
         <button class="calc-btn btn-clear" value="C">C</button>
         <button class="calc-btn btn-operator" value="/">&divide;</button>
 
@@ -34,7 +35,8 @@
         
         <button class="calc-btn btn-digit btn-zero" value="0">0</button>
         <button class="calc-btn btn-decimal" value=".">.</button>
-        <button class="calc-btn btn-operator" value="=">=</button>
+        <!-- equal is not an operator, as it doesn't operate on data -->
+        <button class="calc-btn btn-equals">=</button>
       </div>
     </div>
 
